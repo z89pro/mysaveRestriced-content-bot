@@ -1,78 +1,76 @@
-# VJ Save Restricted Bot
+# 🌟ZAIN Professional Save Restricted Bot
 
-*A Telegram Bot, Which Can Send You Restricted Content By It's Post Link With <b>Login Feature.</b>*
+*An Advanced Telegram Bot to Save Restricted Content (Text, Media, Files) from Private or Public Channels/Groups.*
 
-*Added **TG Account Protection** Security To Prevent Account From Ban Issue, Not Totally But Now TG Account Ban Chance Is Low.*
-
----
-
-<b>Watch Video Tutorial - [Click Here](https://youtu.be/BFEvSX5vIMg)</b>
-
----
-
-## Variables
-
-- `LOGIN_SYSTEM` : Set True or False As per your need.
-- `STRING_SESSION` : Your Tg Account Session String, if login is False then this variable is compulsory to fill. ( ⚠️ Warning - Give string session on deploy website environment variable, don't give in repo )
-- `API_HASH` : Your API Hash From [Telegram Website](https://my.telegram.org) Watch [Video Tutorial](https://youtu.be/LDtgwpI-N7M)
-- `API_ID` : Your API ID From [Telegram Website](https://my.telegram.org) Watch [Video Tutorial](https://youtu.be/LDtgwpI-N7M)
-- `BOT_TOKEN` : Your Bot Token From [BotFather](https://telegram.me/BotFather) ( ⚠️ Warning - Give Bot Token on deploy website environment variable, don't give in repo )
-- `ADMINS` : Your Admin Id For Broadcasting Message
-- `CHANNEL_ID` : Your Channel Id On Which Bot Upload Downloaded Content. ( And Make Your Bot Admin In This Channel With Full Rights )
-- `DB_URI` : Your Mongodb Database Url From [Mongodb](https://mongodb.com) Watch [Video Tutorial](https://youtu.be/DAHRmFdw99o) ( ⚠️ Warning - Give Db Url on deploy website environment variable, don't give in repo )
-- `WAITING_TIME` : Increase Time To Avoid Spamming, Floodwait and Tg Account Ban Issue.
-- `ERROR_MESSAGE` : Set True Or False, If You Want Error Message Then True Else False.
+**🔥 New Features v2.0:**
+- **Topic Support:** Works with Forum/Topic links (`.../c/ID/TOPIC/MSG`).
+- **Smart FloodWait:** Automatically sleeps and retries if Telegram limits are hit.
+- **Dual Sleep System:** - User-defined wait between messages.
+  - **Safety Sleep:** Force 30s rest every 100 messages to prevent bans.
+- **24/7 Uptime:** Built-in web server to keep the bot running on free platforms (Koyeb/Render).
+- **Large Batch Support:** Can process 10,000+ messages using chunk processing.
 
 ---
 
-## Commands
+## 🛠 Config Variables
 
-- `/start` : Check Bot Is Working Or Not
-- `/help` : Check How To Use Bot
-- `/login` : Login Your Telegram String Session 
-- `/logout` : Logout Your Session 
-- `/cancel` : Cancel Your Any Ongoing Task
-- `/broadcast` : Broadcast Message To User (Admin Only)
-
----
-
-## Usage
-
-__FOR PUBLIC CHATS__
-
-_just send post/s link_
-
-
-__FOR PRIVATE CHATS__
-
-_first send invite link of the chat (unnecessary if the account of string session already member of the chat)
-then send post/s link_
-
-
-__FOR BOT CHATS__
-
-_send link with '/b/', bot's username and message id, you might want to install some unofficial client to get the id like below_
-
-```
-https://t.me/b/botusername/4321
-```
-
-__MULTI POSTS__
-
-_send public/private posts link as explained above with formate "from - to" to send multiple messages like below_
-
-
-```
-https://t.me/xxxx/1001-1010
-
-https://t.me/c/xxxx/101 - 120
-```
-
-_note that space in between doesn't matter_
+- `LOGIN_SYSTEM` : Set to `True`. This allows you to login via the bot using `/login`.
+- `API_ID` & `API_HASH` : Get from [my.telegram.org](https://my.telegram.org).
+- `BOT_TOKEN` : Get from [@BotFather](https://t.me/BotFather).
+- `DB_URI` : Your MongoDB Connection String (must start with `mongodb+srv://`).
+- `CHANNEL_ID` : ID of the channel where you want files sent (e.g., `-100xxxx`). The bot must be an Admin there.
+- `ADMINS` : Your User ID (for broadcast/admin commands).
+- `WAITING_TIME` : Time in seconds to wait **after every message**. Recommended: `30` or more to stay safe.
+- `ERROR_MESSAGE` : `True` to see error logs in chat, `False` to hide them.
 
 ---
 
-## Credits
+## 🤖 Commands
 
-- <b>Thanks To [BipinKrish](https://github.com/bipinkrish) For Base Repo
-- Thanks To [Tech VJ](https://github.com/VJBots) For Modification.</b>
+- `/start` - Check if bot is alive.
+- `/login` - Login with your Telegram account (Required to fetch private content).
+- `/logout` - Logout your session.
+- `/settings` - Configure where to send the files (Default channel or Custom).
+- `/set_chat` - Set a custom destination for your files.
+- `/cancel` - Stop the current batch task.
+- `/broadcast` - Send a message to all bot users (Admin only).
+
+---
+
+## 📝 Usage Guide
+
+### 1. Private Chats / Restricted Content
+*First, use `/login` to connect your account.*
+
+**Single Message:**
+Send the link: `https://t.me/c/xxxx/100`
+
+**Batch (Range) of Messages:**
+Send the range: `https://t.me/c/xxxx/100-150`
+
+**Topic/Forum Links (Supported!):**
+`https://t.me/c/xxxx/TOPIC_ID/MSG_ID`
+`https://t.me/c/xxxx/TOPIC_ID/100-150`
+
+### 2. Public Chats
+Just send the post link: `https://t.me/channelname/100`
+
+### 3. Bot Chats
+Send the link with `/b/`: `https://t.me/b/botusername/4321`
+
+---
+
+## 🚀 Deployment (Koyeb/Render)
+
+This bot includes a `start.sh` script to run a fake web server, allowing it to stay online 24/7 on free tiers using a monitoring service.
+
+1. **Deploy** using Dockerfile.
+2. **Add Variables** (API_ID, BOT_TOKEN, DB_URI, etc.).
+3. **Set Port:** `8000`.
+4. **After Deploy:** Use **UptimeRobot** to ping your app URL every 5 minutes.
+
+---
+
+## ❤️ Credits
+- **Base Logic:** [BipinKrish](https://github.com/bipinkrish)
+- **Advanced Modifications:** [Tech VJ](https://github.com/VJBots)
