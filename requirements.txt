@@ -1,0 +1,10 @@
+pyrofork==2.3.45
+tgcrypto
+motor
+Flask
+gunicorn
+requests
+python-dotenv
+aiofiles
+psutil
+dnspython
