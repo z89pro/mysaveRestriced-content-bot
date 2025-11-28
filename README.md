@@ -23,6 +23,18 @@
 - `WAITING_TIME` : Time in seconds to wait **after every message**. Recommended: `30` or more to stay safe.
 - `ERROR_MESSAGE` : `True` to see error logs in chat, `False` to hide them.
 
+  
+*********************Variable Name (Key)	Description (Value kya daalna hai)
+API_ID	Telegram API ID (Numbers mein, e.g., 123456)
+API_HASH	Telegram API Hash (Ye lamba code hota hai)
+BOT_TOKEN	BotFather se mila hua Bot Token
+ADMINS	Aapka numeric Telegram User ID (e.g., 123456789)
+CHANNEL_ID	Jis channel pe files bhejni hain, uska ID (Starts with -100)
+DB_URI	MongoDB Connection String (Start hona chahiye mongodb+srv:// se)
+LOGIN_SYSTEM	Iski value True rakhein.
+WAITING_TIME	30 (Ya jitna seconds aap wait karwana chahte hain)
+ERROR_MESSAGE	True (Errors dekhne ke liye)
+PORT	8000 (Ye zaroori hai taaki web server chal sake)*********************
 ---
 
 ## 🤖 Commands
