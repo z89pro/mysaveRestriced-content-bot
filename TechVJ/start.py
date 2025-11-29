@@ -1,4 +1,4 @@
-# TechVJ/start.py - Final Metadata & Thumbnail Fix
+# TechVJ/start.py - Final Version with Option 1 Design & Split Logic
 import os
 import asyncio 
 import pyrogram
@@ -89,30 +89,45 @@ def parse_link(link_text):
         print(f"Parse Error: {e}")
     return None, None
 
-async def progress_bar(current, total, client, message, start, type, file_name, processed_msgs, total_msgs):
+# --- NEW PROGRESS BAR (OPTION 1 DESIGN) ---
+async def progress_bar(current, total, client, message, start, type, file_name, processed_msgs, total_msgs, file_dc=None, user_dc=None):
     now = time.time()
     diff = now - start
+    
+    # Update every 8 seconds to avoid FloodWait
     if round(diff % 8) == 0 or current == total:
         percentage = (current * 100) / total
         speed = current / diff if diff else 0
         eta = round((total - current) / speed) if speed else 0
+        elapsed = round(diff)
         
+        # Circle Style Bar (12 Dots)
         filled = "●"
         empty = "○"
-        bar_length = 10
-        filled_length = math.floor(percentage / 10)
+        bar_length = 12
+        filled_length = math.floor((percentage / 100) * bar_length)
         bar = (filled * filled_length) + (empty * (bar_length - filled_length))
         
-        safe_file_name = file_name[:25] + "..." if len(file_name) > 25 else file_name
-        
+        # UpperCase Conversions for Design
+        type_str = type.upper()
+        name_str = file_name[:20].upper() + "..." if len(file_name) > 20 else file_name.upper()
+        processed_size = humanbytes(current).upper()
+        total_size = humanbytes(total).upper()
+        speed_str = f"{humanbytes(speed)}/S".upper()
+        eta_str = TimeFormatter(eta * 1000).upper()
+        elapsed_str = TimeFormatter(elapsed * 1000).upper()
+        file_dc_str = str(file_dc) if file_dc else "N/A"
+        user_dc_str = str(user_dc) if user_dc else "N/A"
+
+        # Final Stats String (Bold & Caps - Option 1)
         stats = (
-            f"📥 **Downloading:** `{safe_file_name}`\n\n"
-            f"📊 **Progress:** `{percentage:.2f}%`\n"
-            f"[{bar}]\n\n"
-            f"💾 **Size:** `{humanbytes(current)} / {humanbytes(total)}`\n"
-            f"📦 **Batch:** `{processed_msgs} / {total_msgs}`\n"
-            f"⚡ **Speed:** `{humanbytes(speed)}/s`\n"
-            f"⏳ **ETA:** `{TimeFormatter(eta * 1000)}`"
+            f"**TASK STATUS: {type_str} ({processed_msgs}/{total_msgs})**\n"
+            f"**FILE NAME  : {name_str}**\n\n"
+            f"**PROGRESS : [{bar}] {percentage:.2f}%**\n"
+            f"**PROCESSED: {processed_size} OF {total_size}**\n"
+            f"**SPEED    : {speed_str} | ETA: {eta_str}**\n"
+            f"**DC ID    : {file_dc_str} (FILE) | {user_dc_str} (USER)**\n"
+            f"**ELAPSED  : {elapsed_str}**"
         )
         try: await client.edit_message_text(message.chat.id, message.id, stats)
         except: pass
@@ -183,7 +198,7 @@ async def save(client: Client, message: Message):
         chat_to_send = custom_chat_id or (int(CHANNEL_ID) if CHANNEL_ID else message.chat.id)
         message_ids = list(range(fromID, toID + 1))
         
-        smsg = await client.send_message(message.chat.id, f"**Task:** `Starting...`\n**Total:** `{len(message_ids)}`")
+        smsg = await client.send_message(message.chat.id, f"**TASK:** `Starting...`\n**TOTAL:** `{len(message_ids)}`")
         
         try:
             await handle_private_batch(client, acc, message, smsg, chat_to_send, chatid, message_ids)
@@ -196,6 +211,12 @@ async def handle_private_batch(client, acc, message, smsg, chat_to_send, chatid,
     processed = 0
     total = len(message_ids)
     
+    # Extract User DC (from session)
+    user_dc = None
+    try: 
+        if acc.session: user_dc = acc.session.dc_id
+    except: pass
+
     for chunk in chunk_list(message_ids, 100):
         if batch_temp.IS_BATCH.get(message.from_user.id): break
         
@@ -205,7 +226,7 @@ async def handle_private_batch(client, acc, message, smsg, chat_to_send, chatid,
                 chunk_msgs = await acc.get_messages(chatid, chunk)
                 break
             except FloodWait as e:
-                await smsg.edit_text(f"**⚠️ FloodWait Detected!**\n\nSleeping for {e.value}s... Bot will resume automatically.")
+                await smsg.edit_text(f"**⚠️ FLOODWAIT DETECTED!**\n\nSleeping for {e.value}s...")
                 await asyncio.sleep(e.value + 5)
                 continue
             except Exception as e:
@@ -227,13 +248,25 @@ async def handle_private_batch(client, acc, message, smsg, chat_to_send, chatid,
                 continue
 
             file_name = "File"
-            if msg.document: file_name = msg.document.file_name or "Document"
-            elif msg.video: file_name = msg.video.file_name or "Video"
-            elif msg.audio: file_name = msg.audio.file_name or "Audio"
-            elif msg.voice: file_name = "Voice.ogg"
-            elif msg.photo: file_name = "Photo.jpg"
+            file_dc = None
             
-            progress_args = [client, smsg, time.time(), "📥 Downloading", file_name, processed, total]
+            # Extract File Metadata & DC
+            if msg.document: 
+                file_name = msg.document.file_name or "Document"
+                file_dc = msg.document.dc_id
+            elif msg.video: 
+                file_name = msg.video.file_name or "Video"
+                file_dc = msg.video.dc_id
+            elif msg.audio: 
+                file_name = msg.audio.file_name or "Audio"
+                file_dc = msg.audio.dc_id
+            elif msg.photo:
+                file_name = "Photo.jpg"
+                try: file_dc = msg.photo.file_id # Photos don't have direct DC ID like docs, placeholder
+                except: pass
+            
+            # STATUS: DOWNLOADING
+            progress_args = [client, smsg, time.time(), "DOWNLOADING", file_name, processed, total, file_dc, user_dc]
             f_path = None
             
             while True:
@@ -241,7 +274,7 @@ async def handle_private_batch(client, acc, message, smsg, chat_to_send, chatid,
                     f_path = await acc.download_media(msg, progress=progress_bar, progress_args=progress_args)
                     break
                 except FloodWait as e:
-                    await smsg.edit_text(f"**⚠️ Download FloodWait!**\nSleeping {e.value}s...")
+                    await smsg.edit_text(f"**⚠️ DOWNLOAD FLOODWAIT!**\nSleeping {e.value}s...")
                     await asyncio.sleep(e.value + 5)
                 except Exception: break
             
@@ -249,32 +282,24 @@ async def handle_private_batch(client, acc, message, smsg, chat_to_send, chatid,
             if batch_temp.IS_BATCH.get(message.from_user.id):
                 if os.path.exists(f_path): os.remove(f_path)
                 break
-
-            await smsg.edit_text(f"**📤 Uploading...**\nBatch: {processed}/{total}")
             
-            # --- METADATA EXTRACTION ---
+            # Extract Thumbnails & Metadata for Upload
             thumb_path = None
             duration = 0
             width = 0
             height = 0
-            
             try:
                 if msg.video:
-                    duration = msg.video.duration
-                    width = msg.video.width
-                    height = msg.video.height
-                    if msg.video.thumbs:
-                        thumb_path = await acc.download_media(msg.video.thumbs[0].file_id)
-                elif msg.audio and msg.audio.thumbs:
-                    thumb_path = await acc.download_media(msg.audio.thumbs[0].file_id)
-                elif msg.document and msg.document.thumbs:
-                    thumb_path = await acc.download_media(msg.document.thumbs[0].file_id)
-            except:
-                pass
+                    duration, width, height = msg.video.duration, msg.video.width, msg.video.height
+                    if msg.video.thumbs: thumb_path = await acc.download_media(msg.video.thumbs[0].file_id)
+                elif msg.audio and msg.audio.thumbs: thumb_path = await acc.download_media(msg.audio.thumbs[0].file_id)
+                elif msg.document and msg.document.thumbs: thumb_path = await acc.download_media(msg.document.thumbs[0].file_id)
+            except: pass
             
+            # Split Logic Check (1.95 GB)
             files = [f_path]
-            # Split only if > 2GB
             if os.path.getsize(f_path) > 1.95 * 1024**3:
+                await smsg.edit_text(f"**⚠️ FILE > 2GB. SPLITTING...**")
                 files = await split_file(f_path)
                 os.remove(f_path)
             
@@ -286,24 +311,16 @@ async def handle_private_batch(client, acc, message, smsg, chat_to_send, chatid,
                 
                 fname = os.path.basename(fp)
                 new_cap = f"{fname}\nPart {i+1}/{len(files)}\n\n{cap}" if len(files)>1 else cap
-                p_args = [client, smsg, time.time(), "📤 Uploading", fname, processed, total]
+                
+                # STATUS: UPLOADING
+                p_args = [client, smsg, time.time(), "UPLOADING", fname, processed, total, file_dc, user_dc]
                 
                 while True:
                     try:
                         if len(files) > 1:
                             await client.send_document(chat_to_send, fp, caption=new_cap, thumb=thumb_path, progress=progress_bar, progress_args=p_args)
                         elif "Video" == msg_type:
-                            await client.send_video(
-                                chat_to_send, 
-                                fp, 
-                                caption=new_cap, 
-                                duration=duration, 
-                                width=width, 
-                                height=height, 
-                                thumb=thumb_path, 
-                                progress=progress_bar, 
-                                progress_args=p_args
-                            )
+                            await client.send_video(chat_to_send, fp, caption=new_cap, duration=duration, width=width, height=height, thumb=thumb_path, progress=progress_bar, progress_args=p_args)
                         elif "Audio" == msg_type:
                             await client.send_audio(chat_to_send, fp, caption=new_cap, thumb=thumb_path, progress=progress_bar, progress_args=p_args)
                         elif "Voice" == msg_type:
@@ -314,7 +331,7 @@ async def handle_private_batch(client, acc, message, smsg, chat_to_send, chatid,
                             await client.send_document(chat_to_send, fp, caption=new_cap, thumb=thumb_path, progress=progress_bar, progress_args=p_args)
                         break
                     except FloodWait as e:
-                        await smsg.edit_text(f"**⚠️ Upload FloodWait!**\nSleeping {e.value}s...")
+                        await smsg.edit_text(f"**⚠️ UPLOAD FLOODWAIT!**\nSleeping {e.value}s...")
                         await asyncio.sleep(e.value + 5)
                     except Exception as e:
                         if ERROR_MESSAGE: await client.send_message(message.chat.id, f"Error up: {e}")
@@ -322,15 +339,12 @@ async def handle_private_batch(client, acc, message, smsg, chat_to_send, chatid,
                 
                 if os.path.exists(fp): os.remove(fp)
             
-            # Clean up thumbnail
-            if thumb_path and os.path.exists(thumb_path):
-                os.remove(thumb_path)
-            
+            if thumb_path and os.path.exists(thumb_path): os.remove(thumb_path)
             await asyncio.sleep(WAITING_TIME)
 
         if processed < total:
-            await smsg.edit_text(f"**😴 Safety Sleep (30s)...**\nProcessed: {processed}/{total}\nProtecting your Account.")
+            await smsg.edit_text(f"**😴 SAFETY SLEEP (30S)...**\nProcessed: {processed}/{total}\nProtecting your Account.")
             await asyncio.sleep(30)
             
     await smsg.delete()
-    await client.send_message(message.chat.id, "**✅ Task Completed!**")
+    await client.send_message(message.chat.id, "**✅ TASK COMPLETED!**")
