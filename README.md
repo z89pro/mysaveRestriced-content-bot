@@ -67,10 +67,13 @@ LOGIN_SYSTEM = True                      # Must be True for private chats
 WAITING_TIME = 30                        # Seconds to wait between messages
 ERROR_MESSAGE= True                      # Show error logs?
 PORT         = 8000                      # Required for 24/7 Uptime
+
+
+
 🤖 BOT FATHER SETUP
 Click the box below to copy commands instantly for @BotFather.
-
-start - ⚡ Initialize System
+##
+start - ⚡ Initialize System **
 login - 🔐 Authenticate User Session
 logout - 🔓 Terminate Session
 settings - ⚙️ Output Configuration
