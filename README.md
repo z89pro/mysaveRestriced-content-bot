@@ -1,88 +1,96 @@
-# 🌟ZAIN Professional Save Restricted Bot
+# ⚡ 𝗭𝗔𝗜𝗡 𝗖𝗬𝗕𝗘𝗥 𝗧𝗘𝗖𝗛 𝗦𝗢𝗟𝗨𝗧𝗜𝗢𝗡𝗦 ⚡
 
-*An Advanced Telegram Bot to Save Restricted Content (Text, Media, Files) from Private or Public Channels/Groups.*
+<p align="center">
+  <img src="https://graph.org/file/your-logo-url-here.jpg" alt="Zain Cyber Tech" width="100%">
+</p>
 
-**🔥 New Features v2.0:**
-- **Topic Support:** Works with Forum/Topic links (`.../c/ID/TOPIC/MSG`).
-- **Smart FloodWait:** Automatically sleeps and retries if Telegram limits are hit.
-- **Dual Sleep System:** - User-defined wait between messages.
-  - **Safety Sleep:** Force 30s rest every 100 messages to prevent bans.
-- **24/7 Uptime:** Built-in web server to keep the bot running on free platforms (Koyeb/Render).
-- **Large Batch Support:** Can process 10,000+ messages using chunk processing.
-
----
-
-## 🛠 Config Variables
-
-- `LOGIN_SYSTEM` : Set to `True`. This allows you to login via the bot using `/login`.
-- `API_ID` & `API_HASH` : Get from [my.telegram.org](https://my.telegram.org).
-- `BOT_TOKEN` : Get from [@BotFather](https://t.me/BotFather).
-- `DB_URI` : Your MongoDB Connection String (must start with `mongodb+srv://`).
-- `CHANNEL_ID` : ID of the channel where you want files sent (e.g., `-100xxxx`). The bot must be an Admin there.
-- `ADMINS` : Your User ID (for broadcast/admin commands).
-- `WAITING_TIME` : Time in seconds to wait **after every message**. Recommended: `30` or more to stay safe.
-- `ERROR_MESSAGE` : `True` to see error logs in chat, `False` to hide them.
-
-  
-*********************Variable Name (Key)	Description (Value kya daalna hai)
-API_ID	Telegram API ID (Numbers mein, e.g., 123456)
-API_HASH	Telegram API Hash (Ye lamba code hota hai)
-BOT_TOKEN	BotFather se mila hua Bot Token
-ADMINS	Aapka numeric Telegram User ID (e.g., 123456789)
-CHANNEL_ID	Jis channel pe files bhejni hain, uska ID (Starts with -100)
-DB_URI	MongoDB Connection String (Start hona chahiye mongodb+srv:// se)
-LOGIN_SYSTEM	Iski value True rakhein.
-WAITING_TIME	30 (Ya jitna seconds aap wait karwana chahte hain)
-ERROR_MESSAGE	True (Errors dekhne ke liye)
-PORT	8000 (Ye zaroori hai taaki web server chal sake)*********************
----
-
-## 🤖 Commands
-
-- `/start` - Check if bot is alive.
-- `/login` - Login with your Telegram account (Required to fetch private content).
-- `/logout` - Logout your session.
-- `/settings` - Configure where to send the files (Default channel or Custom).
-- `/set_chat` - Set a custom destination for your files.
-- `/cancel` - Stop the current batch task.
-- `/broadcast` - Send a message to all bot users (Admin only).
+<p align="center">
+  <a href="https://github.com/YourUsername/YourRepo">
+    <img src="https://img.shields.io/badge/SYSTEM-ONLINE-success?style=for-the-badge&logo=linux" alt="Status">
+  </a>
+  <a href="https://python.org">
+    <img src="https://img.shields.io/badge/CORE-PYTHON_3.10-blue?style=for-the-badge&logo=python" alt="Python">
+  </a>
+  <a href="https://t.me/YourChannel">
+    <img src="https://img.shields.io/badge/SUPPORT-ENCRYPTED-red?style=for-the-badge&logo=telegram" alt="Support">
+  </a>
+</p>
 
 ---
 
-## 📝 Usage Guide
+## 🖥️ **SYSTEM_FEATURES::V2.0**
 
-### 1. Private Chats / Restricted Content
-*First, use `/login` to connect your account.*
+> **INITIALIZING ADVANCED PROTOCOLS...**
 
-**Single Message:**
-Send the link: `https://t.me/c/xxxx/100`
-
-**Batch (Range) of Messages:**
-Send the range: `https://t.me/c/xxxx/100-150`
-
-**Topic/Forum Links (Supported!):**
-`https://t.me/c/xxxx/TOPIC_ID/MSG_ID`
-`https://t.me/c/xxxx/TOPIC_ID/100-150`
-
-### 2. Public Chats
-Just send the post link: `https://t.me/channelname/100`
-
-### 3. Bot Chats
-Send the link with `/b/`: `https://t.me/b/botusername/4321`
+* **[🔓] BYPASS PROTOCOL:** Extracts content from Private Restricted Channels.
+* **[📂] TOPIC SUPPORT:** Full compatibility with Forum/Topic IDs.
+* **[🛡️] ANTI-BAN SHIELD:** Smart FloodWait detection with Auto-Resume logic.
+* **[⚡] TURBO BATCH:** Process 10,000+ messages in optimized chunks.
+* **[🌐] ALWAYS ONLINE:** Integrated Heartbeat Server for 24/7 uptime.
+* **[🎥] MEDIA PRESERVATION:** Retains original Metadata, Thumbnails & Resolution.
 
 ---
 
-## 🚀 Deployment (Koyeb/Render)
+## ⚙️ **CONFIGURATION_VARIABLES**
 
-This bot includes a `start.sh` script to run a fake web server, allowing it to stay online 24/7 on free tiers using a monitoring service.
+*Fill these values in your Deployment Environment (Koyeb/Render).*
 
-1. **Deploy** using Dockerfile.
-2. **Add Variables** (API_ID, BOT_TOKEN, DB_URI, etc.).
-3. **Set Port:** `8000`.
-4. **After Deploy:** Use **UptimeRobot** to ping your app URL every 5 minutes.
+```bash
+# ----------------[ CORE CREDENTIALS ]----------------
+API_ID       = "Get this from my.telegram.org"
+API_HASH     = "Get this from my.telegram.org"
+BOT_TOKEN    = "Get this from @BotFather"
 
----
+# ----------------[ DATABASE ACCESS ]-----------------
+DB_URI       = "mongodb+srv://..."
 
-## ❤️ Credits
-- **Base Logic:** [BipinKrish](https://github.com/bipinkrish)
-- **Advanced Modifications:** [Tech VJ](https://github.com/VJBots)
+# ----------------[ ACCESS CONTROL ]------------------
+ADMINS       = "Your Numeric Telegram ID"
+CHANNEL_ID   = "Dump Channel ID (Starts with -100)"
+
+# ----------------[ SYSTEM SETTINGS ]-----------------
+LOGIN_SYSTEM = True
+WAITING_TIME = 30
+ERROR_MESSAGE= True
+PORT         = 8000
+    **Bot Commands**
+start - ⚡ Initialize System
+login - 🔐 Authenticate User Session
+logout - 🔓 Terminate Session
+settings - ⚙️ Output Configuration
+set_chat - 📡 Set Custom Target Node
+clear_chat - ♻️ Reset to Default Node
+cancel - 🛑 Abort Current Process
+broadcast - 📢 Global System Alert
+help - 📜 Access User Manual
+
+ OPERATIONAL_GUIDE
+[1] AUTHENTICATION
+First, establish a secure link with your account.
+Command: /login
+Follow the OTP verification process.
+[2] EXTRACTION (Private/Public)
+Send links directly to the bot.
+Single Target: https://t.me/c/123456/100
+Batch Extraction: https://t.me/c/123456/100-150
+Topic Specific: https://t.me/c/123456/555/100
+☁️ DEPLOYMENT_PROTOCOL
+PLATFORM: KOYEB / RENDER
+Builder: Select Dockerfile.
+Variables: Add the variables listed in the Configuration section.
+Port: Set 8000 to activate the web server.
+Keep-Alive: Connect App URL to UptimeRobot.
+👨‍💻 CREDITS & DEVELOPMENT
+<p align="center">
+<b>CORE ENGINEERING & LOGIC:</b>
+
+🚀 <b>Tech VJ</b>
+</p>
+<p align="center">
+<b>ADVANCED MODIFICATION & UI:</b>
+
+💻 <b>Zain Cyber Tech</b>
+</p>
+<p align="center">
+<img src
+
