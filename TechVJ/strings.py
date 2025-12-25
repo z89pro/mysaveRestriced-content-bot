@@ -1,7 +1,12 @@
 # Don't Remove Credit Tg - @VJ_Bots
 # Subscribe YouTube Channel For Amazing Bot https://youtube.com/@Tech_VJ
 # Ask Doubt on telegram @KingVJ01
+START_TEXT = """
+👋 Hello!
 
+I am alive.
+Use /help to see available commands.
+"""
 HELP_TXT = """**🌟 Help Menu** 
 
 **__FOR PRIVATE CHATS__**
