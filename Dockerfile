@@ -2,15 +2,13 @@ FROM python:3.10.8-slim-buster
 
 WORKDIR /app
 
-# Install dependencies
-COPY requirements.txt requirements.txt
-RUN pip3 install -r requirements.txt
+RUN apt-get update && apt-get install -y dos2unix && rm -rf /var/lib/apt/lists/*
 
-# Copy all files
+COPY requirements.txt .
+RUN pip3 install --no-cache-dir -r requirements.txt
+
 COPY . .
+RUN dos2unix start.sh && chmod +x start.sh
 
-# Make start script executable
-RUN chmod +x start.sh
-
-# Run the start script
+EXPOSE 8000
 CMD ["bash", "start.sh"]
